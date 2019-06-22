@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<meta charset="utf-8">
+<title>bean</title>
+
+<head></head>
+<body>
+<canvas id="mc" width="600"height="600" style="border:solid;position:absolute;z-index:1"></canvas>
+<script>
+	
+	var canvas=document.getElementById("mc");
+	var context=canvas.getContext("2d");		
+	var kuan=400;																//生命值长度
+	var fs=0;																	//分数
+	var t=500;
+	var x=0,y=0;
+	var a=[0];	
+	var b=[0];																	//x，y为方块位置，建立a数组储存x，b数组储存y
+	var foodx=[rand()];
+	var foody=[rand()];   														//建立foodx数组储存事物横坐标事foody数组同理
+	context.strokeRect(0,0,500,500);              								//活动范围
+	context.fillRect(a[a.length-1],b[b.length-1],10,10);						//初始方块,方块边长为10
+	context.font="20px Arial"
+	context.strokeText('空格开始 方向键控制 Enter刷新',0,520,250);
+	
+	function rand()
+{                                          										//产生随机数，作为食物位置
+    return parseInt(Math.random()*50);
+}
+	function foods()															//吃到食物的操作
+{
+	if(a[a.length-1]==foodx[foodx.length-1]*10&&b[b.length-1]==foody[foody.length-1]*10)
+	{
+		context.clearRect(0,530,600,30);
+		fs=fs+10;	
+		kuan=kuan+40;
+		context.strokeText('分数'+fs,0,550,100);	
+		foodx.push(rand());
+		foody.push(rand());
+		context.fillRect(foodx[foodx.length-1]*10,foody[foody.length-1]*10,10,10);
+	}
+	if(fs>=50)                                                                   //生命值消失速度
+	{	
+		clearInterval(setInterval(TimeC,t));
+		t=50000;
+		setInterval(TimeC,t);
+	};
+	
+}	
+
+	function bean()															    //方块移动
+{	
+	context.clearRect(a[a.length-2],b[b.length-2],10,10);
+	context.fillRect(a[a.length-1],b[b.length-1],10,10);
+}
+
+	function ck()                                                               //检测是否越界
+{
+	if(a[a.length-1]+10>500)
+	{
+		alert("失败！");	
+		location.reload();
+	}
+	if(b[b.length-1]+10>500)
+	{
+		alert("失败！");	
+		location.reload();
+	}
+	if(a[a.length-1]<0)
+	{
+		alert("失败！");	
+		location.reload();
+	}
+	if(b[b.length-1]<0)
+	{
+		alert("失败！");	
+		location.reload();
+	}
+}
+	function TimeC()
+{
+		context.clearRect(35,580,kuan,10);			
+		context.save();
+		kuan=kuan-5;
+		context.fillRect(35,580,kuan,10);
+		context.restore();
+		if(kuan<0)
+		{
+			alert("失败！");	
+			location.reload();
+		}
+}
+
+
+	document.onkeydown=function(event)
+{                            													//空格
+	var e = event || window.event;
+	if(e&&e.keyCode==32)														//空格键开始
+	{
+		Start();
+	}
+}
+						
+	function Start()															//初始化
+{			
+	document.onkeydown=function(event)
+	{                            												//上下左右，暂停键空格，enter键
+		var e = event || window.event;
+			
+		if(e&&e.keyCode==38)													//方向键上
+		{
+			y=y-10;a.push(x);b.push(y);bean();ck();foods();
+		}
+		if(e&&e.keyCode==40)													//方向键下
+		{
+			y=y+10;a.push(x);b.push(y);bean();ck();foods();
+		}
+		if(e&&e.keyCode==37)													//方向键左
+		{
+			x=x-10;a.push(x);b.push(y);bean();ck();foods();
+		}
+		if(e&&e.keyCode==39)													//方向键右
+		{
+			x=x+10;a.push(x);b.push(y);bean();ck();foods();
+		}
+		if(e&&e.keyCode==13)													//enter键刷新
+		{	
+			location.reload()
+		}
+	}								
+	context.fillRect(foodx[foodx.length-1]*10,foody[foody.length-1]*10,10,10);	//食物
+	context.strokeText("HP:",0,590);                   							//生命值条
+	setInterval(TimeC,t);	
+}
+
+</script>
+</body>
+</html>
